@@ -106,11 +106,47 @@ export const spanDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Input',
-		name: 'spanInput',
+		displayName: 'Input Mode',
+		name: 'spanInputMode',
+		type: 'options',
+		default: 'assignment',
+		options: [
+			{ name: 'Key/Value (Drag & Drop)', value: 'assignment' },
+			{ name: 'JSON', value: 'json' },
+		],
+		displayOptions: {
+			show: showSpan,
+		},
+	},
+	{
+		displayName: 'Input Key/Value Pairs',
+		name: 'spanInputAssignments',
+		type: 'assignmentCollection',
+		default: {},
+		displayOptions: {
+			show: {
+				...showSpan,
+				spanInputMode: ['assignment'],
+			},
+		},
+	},
+	{
+		displayName: 'Input (JSON)',
+		name: 'spanInputJson',
 		type: 'json',
+		default: '{}',
+		displayOptions: {
+			show: {
+				...showSpan,
+				spanInputMode: ['json'],
+			},
+		},
+	},
+	{
+		displayName: 'Resolved Input',
+		name: 'spanInput',
+		type: 'hidden',
 		default: '',
-		description: 'JSON payload for span input (prompt, parameters, etc.)',
 		displayOptions: {
 			show: showSpan,
 		},
@@ -118,15 +154,53 @@ export const spanDescription: INodeProperties[] = [
 			send: {
 				type: 'body',
 				property: 'input',
+				value:
+					'={{$parameter.spanInputMode === "json" ? (() => { const data = $parameter.spanInputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.spanInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
 	{
-		displayName: 'Output',
-		name: 'spanOutput',
+		displayName: 'Output Mode',
+		name: 'spanOutputMode',
+		type: 'options',
+		default: 'assignment',
+		options: [
+			{ name: 'Key/Value (Drag & Drop)', value: 'assignment' },
+			{ name: 'JSON', value: 'json' },
+		],
+		displayOptions: {
+			show: showSpan,
+		},
+	},
+	{
+		displayName: 'Output Key/Value Pairs',
+		name: 'spanOutputAssignments',
+		type: 'assignmentCollection',
+		default: {},
+		displayOptions: {
+			show: {
+				...showSpan,
+				spanOutputMode: ['assignment'],
+			},
+		},
+	},
+	{
+		displayName: 'Output (JSON)',
+		name: 'spanOutputJson',
 		type: 'json',
+		default: '{}',
+		displayOptions: {
+			show: {
+				...showSpan,
+				spanOutputMode: ['json'],
+			},
+		},
+	},
+	{
+		displayName: 'Resolved Output',
+		name: 'spanOutput',
+		type: 'hidden',
 		default: '',
-		description: 'Result JSON for the span',
 		displayOptions: {
 			show: showSpan,
 		},
@@ -134,15 +208,53 @@ export const spanDescription: INodeProperties[] = [
 			send: {
 				type: 'body',
 				property: 'output',
+				value:
+					'={{$parameter.spanOutputMode === "json" ? (() => { const data = $parameter.spanOutputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.spanOutputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
 	{
-		displayName: 'Metadata',
-		name: 'spanMetadata',
+		displayName: 'Metadata Mode',
+		name: 'spanMetadataMode',
+		type: 'options',
+		default: 'assignment',
+		options: [
+			{ name: 'Key/Value (Drag & Drop)', value: 'assignment' },
+			{ name: 'JSON', value: 'json' },
+		],
+		displayOptions: {
+			show: showSpan,
+		},
+	},
+	{
+		displayName: 'Metadata Key/Value Pairs',
+		name: 'spanMetadataAssignments',
+		type: 'assignmentCollection',
+		default: {},
+		displayOptions: {
+			show: {
+				...showSpan,
+				spanMetadataMode: ['assignment'],
+			},
+		},
+	},
+	{
+		displayName: 'Metadata (JSON)',
+		name: 'spanMetadataJson',
 		type: 'json',
+		default: '{}',
+		displayOptions: {
+			show: {
+				...showSpan,
+				spanMetadataMode: ['json'],
+			},
+		},
+	},
+	{
+		displayName: 'Resolved Metadata',
+		name: 'spanMetadata',
+		type: 'hidden',
 		default: '',
-		description: 'Additional attributes to attach to the span',
 		displayOptions: {
 			show: showSpan,
 		},
@@ -150,6 +262,8 @@ export const spanDescription: INodeProperties[] = [
 			send: {
 				type: 'body',
 				property: 'metadata',
+				value:
+					'={{$parameter.spanMetadataMode === "json" ? (() => { const data = $parameter.spanMetadataJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.spanMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},

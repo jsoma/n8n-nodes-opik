@@ -104,6 +104,7 @@ export const traceDescription: INodeProperties[] = [
 				displayName: 'Project Name or ID',
 				name: 'projectName',
 				type: 'options',
+				required: true,
 				default: '',
 				description:
 					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
@@ -128,11 +129,53 @@ export const traceDescription: INodeProperties[] = [
 		],
 	},
 	{
-		displayName: 'Input',
-		name: 'traceInput',
+		displayName: 'Input Mode',
+		name: 'traceInputMode',
+		type: 'options',
+		default: 'assignment',
+		options: [
+			{
+				name: 'Key/Value (Drag & Drop)',
+				value: 'assignment',
+			},
+			{
+				name: 'JSON',
+				value: 'json',
+			},
+		],
+		displayOptions: {
+			show: showStartTrace,
+		},
+	},
+	{
+		displayName: 'Input Key/Value Pairs',
+		name: 'traceInputAssignments',
+		type: 'assignmentCollection',
+		default: {},
+		displayOptions: {
+			show: {
+				...showStartTrace,
+				traceInputMode: ['assignment'],
+			},
+		},
+	},
+	{
+		displayName: 'Input (JSON)',
+		name: 'traceInputJson',
 		type: 'json',
+		default: '{}',
+		displayOptions: {
+			show: {
+				...showStartTrace,
+				traceInputMode: ['json'],
+			},
+		},
+	},
+	{
+		displayName: 'Resolved Input',
+		name: 'traceInput',
+		type: 'hidden',
 		default: '',
-		description: 'JSON payload describing the trace input. Leave empty to skip.',
 		displayOptions: {
 			show: showStartTrace,
 		},
@@ -140,15 +183,59 @@ export const traceDescription: INodeProperties[] = [
 			send: {
 				type: 'body',
 				property: 'input',
+				value:
+					'={{$parameter.traceInputMode === "json" ? (() => { const data = $parameter.traceInputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
 	{
-		displayName: 'Metadata',
-		name: 'traceMetadata',
+		displayName: 'Metadata Mode',
+		name: 'traceMetadataMode',
+		type: 'options',
+		default: 'assignment',
+		options: [
+			{
+				name: 'Key/Value (Drag & Drop)',
+				value: 'assignment',
+			},
+			{
+				name: 'JSON',
+				value: 'json',
+			},
+		],
+		displayOptions: {
+			show: showStartTrace,
+		},
+	},
+	{
+		displayName: 'Metadata Key/Value Pairs',
+		name: 'traceMetadataAssignments',
+		type: 'assignmentCollection',
+		default: {},
+		displayOptions: {
+			show: {
+				...showStartTrace,
+				traceMetadataMode: ['assignment'],
+			},
+		},
+	},
+	{
+		displayName: 'Metadata (JSON)',
+		name: 'traceMetadataJson',
 		type: 'json',
+		default: '{}',
+		displayOptions: {
+			show: {
+				...showStartTrace,
+				traceMetadataMode: ['json'],
+			},
+		},
+	},
+	{
+		displayName: 'Resolved Metadata',
+		name: 'traceMetadata',
+		type: 'hidden',
 		default: '',
-		description: 'Optional metadata object to attach to the trace',
 		displayOptions: {
 			show: showStartTrace,
 		},
@@ -156,6 +243,8 @@ export const traceDescription: INodeProperties[] = [
 			send: {
 				type: 'body',
 				property: 'metadata',
+				value:
+					'={{$parameter.traceMetadataMode === "json" ? (() => { const data = $parameter.traceMetadataJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
@@ -193,7 +282,7 @@ export const traceDescription: INodeProperties[] = [
 		displayName: 'Output',
 		name: 'traceOutput',
 		type: 'json',
-		default: '',
+		default: '{}',
 		description: 'Final output of the workflow run (JSON). Leave empty to skip.',
 		displayOptions: {
 			show: showEndTrace,
@@ -202,6 +291,8 @@ export const traceDescription: INodeProperties[] = [
 			send: {
 				type: 'body',
 				property: 'output',
+				value:
+					'={{Object.keys($parameter.traceOutput || {}).length ? $parameter.traceOutput : undefined}}',
 			},
 		},
 	},
@@ -209,7 +300,7 @@ export const traceDescription: INodeProperties[] = [
 		displayName: 'Additional Metadata',
 		name: 'traceEndMetadata',
 		type: 'json',
-		default: '',
+		default: '{}',
 		description: 'Metadata updates to attach when completing the trace',
 		displayOptions: {
 			show: showEndTrace,
@@ -218,6 +309,8 @@ export const traceDescription: INodeProperties[] = [
 			send: {
 				type: 'body',
 				property: 'metadata',
+				value:
+					'={{Object.keys($parameter.traceEndMetadata || {}).length ? $parameter.traceEndMetadata : undefined}}',
 			},
 		},
 	},

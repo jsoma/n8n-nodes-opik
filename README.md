@@ -24,7 +24,7 @@ The node exposes these Opik capabilities:
 
 - **Trace** – start a trace with rich input metadata and end it with output/error details.
 - **Span** – log nested spans (LLM/tool/agent/general) including token usage, metadata, and tags.
-- **Prompt** – fetch any prompt or a specific version from the Opik prompt library.
+- **Prompt** – fetch any prompt or a specific version from the Opik prompt library and see the resolved template immediately in the “Prompt Text” preview.
 - **Guardrail** – run PII detection or topic moderation checks and receive violations/redacted text.
 - **Feedback** – log numeric feedback for traces or spans (accuracy, relevance, quality, etc.).
 
@@ -53,7 +53,7 @@ The credential tester pings `/v1/health` to verify connectivity before you run w
 
 1. Install the package following the [community nodes installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
 2. Add your **Opik API** credentials.
-3. Drop the **Opik** node into a workflow and choose the resource/operation you need. Each operation surfaces the most common request parameters (JSON inputs, metadata, tags, token counts, etc.).
+3. Drop the **Opik** node into a workflow and choose the resource/operation you need. Trace and span inputs/metadata can be entered as key/value pairs or raw JSON, whichever is easier, and optional fields live under the “Options” section to keep the main form tidy.
 4. Chain multiple operations together when you want full observability (Start Trace → Log Spans → Check Guardrails → Log Feedback → End Trace).
 
 Every operation returns the raw Opik API response so you can inspect IDs, metadata, or guardrail violations in downstream nodes.

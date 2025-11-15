@@ -4,7 +4,7 @@ import { spanDescription } from './resources/span';
 import { promptDescription } from './resources/prompt';
 import { guardrailDescription } from './resources/guardrail';
 import { feedbackDescription } from './resources/feedback';
-import { getPrompts, getPromptVersions, getProjects } from './methods/loadOptions';
+import { getPrompts, getPromptVersions, getProjects, getPromptText } from './methods/loadOptions';
 
 export class Opik implements INodeType {
 	description: INodeTypeDescription = {
@@ -22,14 +22,14 @@ export class Opik implements INodeType {
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		credentials: [{ name: 'opikApi', required: true }],
-			requestDefaults: {
-				baseURL: '={{$credentials.baseUrl}}',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
+		requestDefaults: {
+			baseURL: '={{$credentials.baseUrl}}',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
 			},
-			properties: [
+		},
+		properties: [
 			{
 				displayName: 'Resource',
 				name: 'resource',
@@ -50,13 +50,14 @@ export class Opik implements INodeType {
 			...guardrailDescription,
 			...feedbackDescription,
 		],
-		};
+	};
 
 	methods = {
 		loadOptions: {
 			getPrompts,
 			getPromptVersions,
 			getProjects,
+			getPromptText,
 		},
 	};
 }

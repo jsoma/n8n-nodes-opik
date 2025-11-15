@@ -65,4 +65,21 @@ export const promptDescription: INodeProperties[] = [
 			show: showPrompt,
 		},
 	},
+	{
+		displayName: 'Prompt Text Name or ID',
+		name: 'promptText',
+		type: 'options',
+		default: '',
+		noDataExpression: true,
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		hint: 'Prompt text preview',
+		typeOptions: {
+			loadOptionsMethod: 'getPromptText',
+			loadOptionsDependsOn: ['promptId', 'promptVersion'],
+		},
+		displayOptions: {
+			show: showPrompt,
+		},
+	},
 ];
