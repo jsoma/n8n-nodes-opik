@@ -30,7 +30,13 @@ The node exposes these Opik capabilities:
 
 ## Credentials
 
-Create an **Opik API** credential with:
+Install the package:
+
+```bash
+npm install @jsoma/n8n-nodes-opik
+```
+
+Then create an **Opik API** credential with:
 
 - **API URL** – Defaults to `https://www.comet.com/opik/api`. Point this to your self-hosted base URL if needed (must include the `/api` suffix).
 - **API Key** – Required for Opik Cloud. You can generate one from the Opik UI (Settings → API Keys). Leave blank only if your self-hosted deployment allows anonymous requests.
