@@ -22,7 +22,7 @@ export const promptDescription: INodeProperties[] = [
 				routing: {
 					request: {
 						method: 'GET',
-						url: '=/v1/private/prompts/by-name/{{$parameter.promptName}}',
+						url: '={{!$parameter.promptVersion ? `/v1/private/prompts/${$parameter.promptId}` : `/v1/private/prompts/${$parameter.promptId}/versions/${$parameter.promptVersion}`}}',
 					},
 				},
 			},
@@ -30,39 +30,39 @@ export const promptDescription: INodeProperties[] = [
 		default: 'get',
 	},
 	{
-		displayName: 'Prompt Name',
-		name: 'promptName',
-		type: 'string',
+		displayName: 'Prompt Name or ID',
+		name: 'promptId',
+		type: 'options',
 		required: true,
 		default: '',
-		description: 'Name of the prompt saved in Opik',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		typeOptions: {
+			loadOptionsMethod: 'getPrompts',
+		},
 		displayOptions: {
 			show: showPrompt,
 		},
 	},
 	{
-		displayName: 'Options',
-		name: 'promptOptions',
-		type: 'collection',
-		default: {},
-		placeholder: 'Add option',
+		displayName: 'Prompt Version Name or ID',
+		name: 'promptVersion',
+		type: 'options',
+		default: '',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		options: [
+			{
+				name: 'Latest Version (Current)',
+				value: '',
+			},
+		],
+		typeOptions: {
+			loadOptionsMethod: 'getPromptVersions',
+			loadOptionsDependsOn: ['promptId'],
+		},
 		displayOptions: {
 			show: showPrompt,
 		},
-		options: [
-			{
-				displayName: 'Version',
-				name: 'version',
-				type: 'number',
-				default: 0,
-				description: 'Fetch a specific version instead of the latest',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'version',
-					},
-				},
-			},
-		],
 	},
 ];

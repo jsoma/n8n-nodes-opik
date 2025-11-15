@@ -33,9 +33,32 @@ export const traceDescription: INodeProperties[] = [
 					request: {
 						method: 'POST',
 						url: '/v1/private/traces',
+						returnFullResponse: true,
 						body: {
 							start_time: '={{$now.toISO()}}',
+							name: "={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
+							project_name: '={{$parameter.options?.projectName || undefined}}',
+							thread_id: '={{$parameter.options?.threadId || undefined}}',
+							end_time: '={{$parameter.options?.autoEndTrace ? $now.toISO() : undefined}}',
 						},
+					},
+					output: {
+						postReceive: [
+							{
+								type: 'setKeyValue',
+								properties: {
+									traceId:
+										'={{$response.headers?.location ? $response.headers.location.split("/").pop() : undefined}}',
+									traceName:
+										"={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
+									projectName: '={{$parameter.options?.projectName || "(workspace default)"}}',
+									threadId: '={{$parameter.options?.threadId || undefined}}',
+									traceUrl: '={{$response.headers?.location || undefined}}',
+									status: '={{$parameter.options?.autoEndTrace ? "ended" : "started"}}',
+									autoEnded: '={{$parameter.options?.autoEndTrace === true}}',
+								},
+							},
+						],
 					},
 				},
 			},
@@ -58,53 +81,51 @@ export const traceDescription: INodeProperties[] = [
 		default: 'start',
 	},
 	{
-		displayName: 'Trace Name',
-		name: 'traceName',
-		type: 'string',
-		required: true,
-		default: '',
-		description: 'Human-readable name for the trace',
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add option',
+		default: {
+			autoEndTrace: false,
+		},
 		displayOptions: {
 			show: showStartTrace,
 		},
-		routing: {
-			send: {
-				type: 'body',
-				property: 'name',
+		options: [
+			{
+				displayName: 'Trace Name',
+				name: 'traceName',
+				type: 'string',
+				default: '',
+				description:
+					'Override the auto-generated trace label (defaults to a timestamp if left empty)',
 			},
-		},
-	},
-	{
-		displayName: 'Project Name',
-		name: 'projectName',
-		type: 'string',
-		default: '',
-		description: 'Override the workspace default project name for this trace',
-		displayOptions: {
-			show: showStartTrace,
-		},
-		routing: {
-			send: {
-				type: 'body',
-				property: 'project_name',
+			{
+				displayName: 'Project Name or ID',
+				name: 'projectName',
+				type: 'options',
+				default: '',
+				description:
+					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+				typeOptions: {
+					loadOptionsMethod: 'getProjects',
+				},
 			},
-		},
-	},
-	{
-		displayName: 'Thread ID',
-		name: 'threadId',
-		type: 'string',
-		default: '',
-		description: 'Use the same thread ID to group related traces',
-		displayOptions: {
-			show: showStartTrace,
-		},
-		routing: {
-			send: {
-				type: 'body',
-				property: 'thread_id',
+			{
+				displayName: 'Thread ID',
+				name: 'threadId',
+				type: 'string',
+				default: '',
+				description: 'Use the same thread ID to group related traces',
 			},
-		},
+			{
+				displayName: 'Auto End Trace',
+				name: 'autoEndTrace',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to immediately mark the trace as completed after creation',
+			},
+		],
 	},
 	{
 		displayName: 'Input',
