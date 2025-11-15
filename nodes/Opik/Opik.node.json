@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-opik",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Artificial Intelligence", "Developer Tools"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/jsoma/n8n-nodes-opik#credentials"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://www.comet.com/docs/opik/"
+			}
+		]
+	}
+}
