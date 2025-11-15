@@ -108,7 +108,6 @@ export async function getPromptVersions(
 				? labelParts.join(' · ')
 				: `Version ${versions.length - index}`,
 			value: version.id ?? version.commit ?? String(index),
-			description: version.template ? version.template : undefined,
 		});
 	}
 
@@ -160,9 +159,8 @@ export async function getPromptText(this: ILoadOptionsFunctions): Promise<INodeP
 
 	return [
 		{
-			name: normalized.length > 600 ? `${normalized.slice(0, 600)}…` : normalized,
-			value: '',
-			description: 'Read-only preview of the selected prompt',
+			name: normalized,
+			value: normalized,
 		},
 	];
 }

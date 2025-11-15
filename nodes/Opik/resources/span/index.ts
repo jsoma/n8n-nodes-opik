@@ -106,6 +106,15 @@ export const spanDescription: INodeProperties[] = [
 		},
 	},
 	{
+		displayName: 'Input',
+		name: 'spanInputHeadline',
+		type: 'notice',
+		default: '',
+		displayOptions: {
+			show: showSpan,
+		},
+	},
+	{
 		displayName: 'Use JSON Input',
 		name: 'spanInputUseJson',
 		type: 'boolean',
@@ -218,6 +227,15 @@ export const spanDescription: INodeProperties[] = [
 				value:
 					'={{$parameter.spanOutputUseJson ? (() => { const data = $parameter.spanOutputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.spanOutputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
+		},
+	},
+	{
+		displayName: 'Metadata',
+		name: 'spanMetadataHeadline',
+		type: 'notice',
+		default: '',
+		displayOptions: {
+			show: showSpan,
 		},
 	},
 	{

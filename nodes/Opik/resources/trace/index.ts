@@ -81,52 +81,13 @@ export const traceDescription: INodeProperties[] = [
 		default: 'start',
 	},
 	{
-		displayName: 'Options',
-		name: 'options',
-		type: 'collection',
-		placeholder: 'Add option',
-		default: {
-			autoEndTrace: false,
-		},
+		displayName: 'Input',
+		name: 'traceInputHeadline',
+		type: 'notice',
+		default: '',
 		displayOptions: {
 			show: showStartTrace,
 		},
-		options: [
-			{
-				displayName: 'Trace Name',
-				name: 'traceName',
-				type: 'string',
-				default: '',
-				description:
-					'Override the auto-generated trace label (defaults to a timestamp if left empty)',
-			},
-			{
-				displayName: 'Project Name or ID',
-				name: 'projectName',
-				type: 'options',
-				required: true,
-				default: '',
-				description:
-					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-				typeOptions: {
-					loadOptionsMethod: 'getProjects',
-				},
-			},
-			{
-				displayName: 'Thread ID',
-				name: 'threadId',
-				type: 'string',
-				default: '',
-				description: 'Use the same thread ID to group related traces',
-			},
-			{
-				displayName: 'Auto End Trace',
-				name: 'autoEndTrace',
-				type: 'boolean',
-				default: false,
-				description: 'Whether to immediately mark the trace as completed after creation',
-			},
-		],
 	},
 	{
 		displayName: 'Use JSON Input',
@@ -180,6 +141,15 @@ export const traceDescription: INodeProperties[] = [
 		},
 	},
 	{
+		displayName: 'Metadata',
+		name: 'traceMetadataHeadline',
+		type: 'notice',
+		default: '',
+		displayOptions: {
+			show: showStartTrace,
+		},
+	},
+	{
 		displayName: 'Use JSON Metadata',
 		name: 'traceMetadataUseJson',
 		type: 'boolean',
@@ -229,6 +199,54 @@ export const traceDescription: INodeProperties[] = [
 					'={{$parameter.traceMetadataUseJson ? (() => { const data = $parameter.traceMetadataJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
+	},
+	{
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add option',
+		default: {
+			autoEndTrace: false,
+		},
+		displayOptions: {
+			show: showStartTrace,
+		},
+		options: [
+			{
+				displayName: 'Trace Name',
+				name: 'traceName',
+				type: 'string',
+				default: '',
+				description:
+					'Override the auto-generated trace label (defaults to a timestamp if left empty)',
+			},
+			{
+				displayName: 'Project Name or ID',
+				name: 'projectName',
+				type: 'options',
+				required: true,
+				default: '',
+				description:
+					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+				typeOptions: {
+					loadOptionsMethod: 'getProjects',
+				},
+			},
+			{
+				displayName: 'Thread ID',
+				name: 'threadId',
+				type: 'string',
+				default: '',
+				description: 'Use the same thread ID to group related traces',
+			},
+			{
+				displayName: 'Auto End Trace',
+				name: 'autoEndTrace',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to immediately mark the trace as completed after creation',
+			},
+		],
 	},
 	{
 		displayName: 'Tags',

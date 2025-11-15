@@ -66,18 +66,18 @@ export const promptDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Prompt Text Name or ID',
+		displayName: 'Prompt Text',
 		name: 'promptText',
-		type: 'options',
+		type: 'string',
 		default: '',
 		noDataExpression: true,
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		hint: 'Prompt text preview',
+		description: 'Read-only preview of the selected prompt version',
+		hint: 'This field updates automatically when you pick a prompt version',
 		typeOptions: {
+			rows: 6,
+			editorIsReadOnly: true,
 			loadOptionsMethod: 'getPromptText',
 			loadOptionsDependsOn: ['promptId', 'promptVersion'],
-			rows: 6,
 		},
 		displayOptions: {
 			show: showPrompt,
