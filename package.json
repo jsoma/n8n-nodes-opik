@@ -1,11 +1,16 @@
 {
   "name": "@jsoma/n8n-nodes-opik",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n community node for Comet Opik tracing, prompts, guardrails, and feedback.",
   "license": "MIT",
   "homepage": "https://github.com/jsoma/n8n-nodes-opik#readme",
-  "keywords": ["n8n-community-node-package"],
-  "author": { "name": "Jonathan Soma", "email": "jonathan.soma@gmail.com" },
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "author": {
+    "name": "Jonathan Soma",
+    "email": "jonathan.soma@gmail.com"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/jsoma/n8n-nodes-opik.git"
@@ -22,12 +27,18 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "n8n": {
     "n8nNodesApiVersion": 1,
     "strict": true,
-    "credentials": ["dist/credentials/OpikApi.credentials.js"],
-    "nodes": ["dist/nodes/Opik/Opik.node.js"]
+    "credentials": [
+      "dist/credentials/OpikApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Opik/Opik.node.js"
+    ]
   },
   "devDependencies": {
     "@n8n/node-cli": "*",
@@ -36,5 +47,7 @@
     "release-it": "^19.0.4",
     "typescript": "5.9.2"
   },
-  "peerDependencies": { "n8n-workflow": "*" }
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
 }
