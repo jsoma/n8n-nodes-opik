@@ -99,6 +99,9 @@ export async function getPromptVersions(
 	});
 
 	for (const [index, version] of versions.entries()) {
+		if (!version.id) {
+			continue;
+		}
 		const createdAt = version.created_at || version.create_at;
 		const labelParts: string[] = [];
 		if (createdAt) {
@@ -112,7 +115,8 @@ export async function getPromptVersions(
 			name: labelParts.length
 				? labelParts.join(' · ')
 				: `Version ${versions.length - index}`,
-			value: version.id ?? version.commit ?? String(index),
+			value: version.id,
+			description: version.change_description?.trim() || undefined,
 		});
 	}
 
@@ -155,29 +159,11 @@ export async function getPromptText(this: ILoadOptionsFunctions): Promise<INodeP
 		})) as { latest_version?: { template?: string } };
 		template = response.latest_version?.template ?? '';
 	} else {
-		try {
-			const response = (await requestOpik.call(this, {
-				method: 'GET',
-				url: `/v1/private/prompts/versions/${promptVersion}`,
-			})) as { template?: string };
-			template = response.template ?? '';
-		} catch {
-			const response = (await requestOpik.call(this, {
-				method: 'GET',
-				url: `/v1/private/prompts/${promptId}/versions`,
-				qs: {
-					size: 200,
-					page: 1,
-				},
-			})) as OpikPromptVersionsResponse;
-
-			if (Array.isArray(response.content)) {
-				const matched =
-					response.content.find((version) => version.id === promptVersion) ||
-					response.content.find((version) => version.commit === promptVersion);
-				template = matched?.template ?? '';
-			}
-		}
+		const response = (await requestOpik.call(this, {
+			method: 'GET',
+			url: `/v1/private/prompts/versions/${promptVersion}`,
+		})) as { template?: string };
+		template = response.template ?? '';
 	}
 
 	const normalized = template || '(Prompt has no template)';
