@@ -82,56 +82,13 @@ export const traceDescription: INodeProperties[] = [
 	},
 	{
 		displayName: 'Input',
-		name: 'traceInputGroup',
-		type: 'collection',
-		placeholder: 'Configure input data',
+		name: 'traceInputAssignments',
+		type: 'assignmentCollection',
+		placeholder: 'Add input entry',
 		default: {},
-		typeOptions: {
-			multipleValues: false,
-		},
 		displayOptions: {
 			show: showStartTrace,
 		},
-	options: [
-		{
-			displayName: 'Input Mode',
-			name: 'traceInputMode',
-				type: 'options',
-				default: 'manual',
-				options: [
-					{
-						name: 'Manual Mapping (Drag & Drop)',
-						value: 'manual',
-					},
-					{
-						name: 'JSON',
-						value: 'json',
-					},
-				],
-		},
-		{
-			displayName: 'Input Key/Value Pairs',
-			name: 'traceInputAssignments',
-			type: 'assignmentCollection',
-			default: {},
-			displayOptions: {
-				show: {
-					'options.traceInputMode': ['manual'],
-				},
-			},
-		},
-		{
-			displayName: 'Input (JSON)',
-			name: 'traceInputJson',
-			type: 'json',
-			default: '{}',
-			displayOptions: {
-				show: {
-					'options.traceInputMode': ['json'],
-				},
-			},
-		},
-	],
 	},
 	{
 		displayName: 'Resolved Input',
@@ -146,62 +103,19 @@ export const traceDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'input',
 				value:
-					'={{$parameter.traceInputMode === "json" ? (() => { const data = $parameter.traceInputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
+					'={{(() => { const assignments = $parameter.traceInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
 	{
 		displayName: 'Metadata',
-		name: 'traceMetadataGroup',
-		type: 'collection',
-		placeholder: 'Configure metadata',
+		name: 'traceMetadataAssignments',
+		type: 'assignmentCollection',
+		placeholder: 'Add metadata entry',
 		default: {},
-		typeOptions: {
-			multipleValues: false,
-		},
 		displayOptions: {
 			show: showStartTrace,
 		},
-	options: [
-		{
-			displayName: 'Metadata Mode',
-			name: 'traceMetadataMode',
-			type: 'options',
-			default: 'manual',
-			options: [
-				{
-					name: 'Manual Mapping (Drag & Drop)',
-					value: 'manual',
-				},
-				{
-					name: 'JSON',
-					value: 'json',
-				},
-			],
-		},
-		{
-			displayName: 'Metadata Key/Value Pairs',
-			name: 'traceMetadataAssignments',
-			type: 'assignmentCollection',
-			default: {},
-			displayOptions: {
-				show: {
-					'options.traceMetadataMode': ['manual'],
-				},
-			},
-		},
-		{
-			displayName: 'Metadata (JSON)',
-			name: 'traceMetadataJson',
-			type: 'json',
-			default: '{}',
-			displayOptions: {
-				show: {
-					'options.traceMetadataMode': ['json'],
-				},
-			},
-		},
-	],
 	},
 	{
 		displayName: 'Resolved Metadata',
@@ -216,7 +130,7 @@ export const traceDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'metadata',
 				value:
-					'={{$parameter.traceMetadataMode === "json" ? (() => { const data = $parameter.traceMetadataJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
+					'={{(() => { const assignments = $parameter.traceMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
@@ -300,10 +214,19 @@ export const traceDescription: INodeProperties[] = [
 	},
 	{
 		displayName: 'Output',
+		name: 'traceOutputAssignments',
+		type: 'assignmentCollection',
+		default: {},
+		description: 'Final output of the workflow run. Leave empty to skip.',
+		displayOptions: {
+			show: showEndTrace,
+		},
+	},
+	{
+		displayName: 'Resolved Output',
 		name: 'traceOutput',
-		type: 'json',
-		default: '{}',
-		description: 'Final output of the workflow run (JSON). Leave empty to skip.',
+		type: 'hidden',
+		default: '',
 		displayOptions: {
 			show: showEndTrace,
 		},
@@ -312,16 +235,25 @@ export const traceDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'output',
 				value:
-					'={{Object.keys($parameter.traceOutput || {}).length ? $parameter.traceOutput : undefined}}',
+					'={{(() => { const assignments = $parameter.traceOutputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
 	{
 		displayName: 'Additional Metadata',
-		name: 'traceEndMetadata',
-		type: 'json',
-		default: '{}',
+		name: 'traceEndMetadataAssignments',
+		type: 'assignmentCollection',
+		default: {},
 		description: 'Metadata updates to attach when completing the trace',
+		displayOptions: {
+			show: showEndTrace,
+		},
+	},
+	{
+		displayName: 'Resolved Metadata',
+		name: 'traceEndMetadata',
+		type: 'hidden',
+		default: '',
 		displayOptions: {
 			show: showEndTrace,
 		},
@@ -330,7 +262,7 @@ export const traceDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'metadata',
 				value:
-					'={{Object.keys($parameter.traceEndMetadata || {}).length ? $parameter.traceEndMetadata : undefined}}',
+					'={{(() => { const assignments = $parameter.traceEndMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},

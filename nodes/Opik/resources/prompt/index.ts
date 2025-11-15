@@ -65,43 +65,4 @@ export const promptDescription: INodeProperties[] = [
 			show: showPrompt,
 		},
 	},
-	{
-		displayName: 'Prompt Text Internal Name or ID',
-		name: 'promptTextInternal',
-		type: 'options',
-		default: '',
-		noDataExpression: true,
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		hint: 'Prompt text preview',
-		typeOptions: {
-			loadOptionsMethod: 'getPromptText',
-			loadOptionsDependsOn: ['promptId', 'promptVersion'],
-		},
-		displayOptions: {
-			show: {
-				resource: ['__hidden_internal_value__'],
-			},
-		},
-	},
-	{
-		displayName: 'Prompt Text',
-		name: 'promptText',
-		type: 'string',
-		default: '={{$parameter.promptTextInternal}}',
-		noDataExpression: true,
-		description: 'Read-only preview of the selected prompt version',
-		hint: 'This field updates automatically when you pick a prompt version',
-		typeOptions: {
-			rows: 6,
-			editor: 'codeNodeEditor',
-			editorIsReadOnly: true,
-		},
-		displayOptions: {
-			show: {
-				...showPrompt,
-				promptId: [{ _cnd: { exists: true } }],
-			},
-		},
-	},
 ];
