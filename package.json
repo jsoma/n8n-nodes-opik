@@ -1,6 +1,6 @@
 {
   "name": "@jsoma/n8n-nodes-opik",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "n8n community node for Comet Opik tracing, prompts, guardrails, and feedback.",
   "license": "MIT",
   "homepage": "https://github.com/jsoma/n8n-nodes-opik#readme",
