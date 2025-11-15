@@ -29,13 +29,13 @@ export const traceDescription: INodeProperties[] = [
 						method: 'POST',
 						url: '/v1/private/traces',
 						returnFullResponse: true,
-						body: {
-							start_time: '={{$now.toISO()}}',
-							name: "={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
-							project_name: '={{$parameter.projectName}}',
-							thread_id: '={{$parameter.options?.threadId || undefined}}',
-							end_time: '={{$parameter.options?.autoEndTrace ? $now.toISO() : undefined}}',
-						},
+					body: {
+						start_time: '={{$now.toISO()}}',
+						name: "={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
+						project_name: '={{$parameter.projectName}}',
+						thread_id: '={{$parameter.traceResolvedThreadId}}',
+						end_time: '={{$parameter.options?.autoEndTrace ? $now.toISO() : undefined}}',
+					},
 					},
 					output: {
 						postReceive: [
@@ -44,10 +44,10 @@ export const traceDescription: INodeProperties[] = [
 								properties: {
 									traceId:
 										'={{$response.headers?.location ? $response.headers.location.split("/").pop() : undefined}}',
-									traceName:
-										"={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
-									projectName: '={{$parameter.projectName}}',
-									threadId: '={{$parameter.options?.threadId || undefined}}',
+								traceName:
+									"={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
+								projectName: '={{$parameter.projectName}}',
+								threadId: '={{$parameter.traceResolvedThreadId}}',
 									traceUrl: '={{$response.headers?.location || undefined}}',
 									status: '={{$parameter.options?.autoEndTrace ? "ended" : "started"}}',
 									autoEnded: '={{$parameter.options?.autoEndTrace === true}}',
@@ -85,6 +85,16 @@ export const traceDescription: INodeProperties[] = [
 				value:
 					'={{(() => { const assignments = $parameter.traceInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
+		},
+	},
+	{
+		displayName: 'Resolved Thread ID',
+		name: 'traceResolvedThreadId',
+		type: 'hidden',
+		default:
+			"={{$parameter.options?.threadId || (function(){const template='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';return template.replace(/[xy]/g,function(c){const r=(Math.random()*16)|0;const v=c==='x'?r:(r&0x3)|0x8;return v.toString(16);});})()}}",
+		displayOptions: {
+			show: showStartTrace,
 		},
 	},
 	{

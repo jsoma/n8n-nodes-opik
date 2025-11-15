@@ -39,7 +39,7 @@ export const promptDescription: INodeProperties[] = [
 								enabled: '={{$parameter.generateN8nTemplate !== false}}',
 								properties: {
 									n8n_template:
-										'={{$json.template ? $json.template.replace(/{{\\s*([^{}\\s]+)\\s*}}/g, (match, name) => `{{$json["${name}"]}}`) : undefined}}',
+										'={{$json.template ? $json.template.replace(/{{\\s*([^{}\\s]+)\\s*}}/g, function(match, name) { return "{{$json[\\"" + name + "\\"]}}"; }) : undefined}}',
 								},
 							},
 						],

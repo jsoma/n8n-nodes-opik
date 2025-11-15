@@ -24,13 +24,33 @@ export const spanDescription: INodeProperties[] = [
 							method: 'POST',
 							url: '/v1/private/spans',
 							body: {
-								start_time: '={{$now.toISO()}}',
-								end_time: '={{$now.toISO()}}',
+								id: '={{$parameter.spanResolvedId}}',
+								start_time: '={{$parameter.options?.startTime || $now.toISO()}}',
+								end_time: '={{$parameter.options?.endTime || $now.toISO()}}',
 								project_name: '={{$parameter.projectName}}',
+								name: '={{$parameter.spanName || undefined}}',
+								type: '={{$parameter.options?.spanType || undefined}}',
+								parent_span_id: '={{$parameter.options?.parentSpanId || undefined}}',
+								model: '={{$parameter.options?.model || undefined}}',
+								provider: '={{$parameter.options?.provider || undefined}}',
+								tags: '={{$parameter.options?.tags || undefined}}',
+								total_estimated_cost: '={{$parameter.options?.totalEstimatedCost || undefined}}',
+								total_estimated_cost_version:
+									'={{$parameter.options?.totalEstimatedCostVersion || undefined}}',
 							},
 						},
+						output: {
+							postReceive: [
+								{
+									type: 'setKeyValue',
+									properties: {
+										spanId: '={{$parameter.spanResolvedId}}',
+									},
+								},
+							],
+						},
 					},
-			},
+				},
 		],
 		default: 'log',
 	},
@@ -52,10 +72,19 @@ export const spanDescription: INodeProperties[] = [
 		},
 	},
 	{
+		displayName: 'Resolved Span ID',
+		name: 'spanResolvedId',
+		type: 'hidden',
+		default:
+			"={{$parameter.options?.spanId || (function(){const template='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';return template.replace(/[xy]/g,function(c){const r=(Math.random()*16)|0;const v=c==='x'?r:(r&0x3)|0x8;return v.toString(16);});})()}}",
+		displayOptions: {
+			show: showSpan,
+		},
+	},
+	{
 		displayName: 'Span Name',
 		name: 'spanName',
 		type: 'string',
-		required: true,
 		default: '',
 		description: 'Human-friendly name to identify the span',
 		displayOptions: {
@@ -65,44 +94,6 @@ export const spanDescription: INodeProperties[] = [
 			send: {
 				type: 'body',
 				property: 'name',
-			},
-		},
-	},
-	{
-		displayName: 'Span Type',
-		name: 'spanType',
-		type: 'options',
-		options: [
-			{ name: 'General', value: 'general' },
-			{ name: 'LLM', value: 'llm' },
-			{ name: 'Tool', value: 'tool' },
-			{ name: 'Agent', value: 'agent' },
-		],
-		default: 'general',
-		description: 'Categorize the work performed within the span',
-		displayOptions: {
-			show: showSpan,
-		},
-		routing: {
-			send: {
-				type: 'body',
-				property: 'type',
-			},
-		},
-	},
-	{
-		displayName: 'Parent Span ID',
-		name: 'parentSpanId',
-		type: 'string',
-		default: '',
-		description: 'Attach to a parent span to build a hierarchy',
-		displayOptions: {
-			show: showSpan,
-		},
-		routing: {
-			send: {
-				type: 'body',
-				property: 'parent_span_id',
 			},
 		},
 	},
@@ -186,6 +177,122 @@ export const spanDescription: INodeProperties[] = [
 					'={{(() => { const assignments = $parameter.spanMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
+	},
+	{
+		displayName: 'Resolved Usage',
+		name: 'spanUsage',
+		type: 'hidden',
+		default: '',
+		displayOptions: {
+			show: showSpan,
+		},
+		routing: {
+			send: {
+				type: 'body',
+				property: 'usage',
+				value:
+					'={{(() => { const assignments = $parameter.options?.spanUsageAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { const numericValue = Number(assignment.value); obj[assignment.name] = Number.isNaN(numericValue) ? assignment.value : numericValue; } } return Object.keys(obj).length ? obj : undefined; })()}}',
+			},
+		},
+	},
+	{
+		displayName: 'Resolved Error Info',
+		name: 'spanErrorInfo',
+		type: 'hidden',
+		default: '',
+		displayOptions: {
+			show: showSpan,
+		},
+		routing: {
+			send: {
+				type: 'body',
+				property: 'error_info',
+				value:
+					'={{(() => { const opts = $parameter.options || {}; const result = {}; if (opts.errorMessage) result.message = opts.errorMessage; if (opts.errorType) result.type = opts.errorType; if (opts.errorCode) result.code = opts.errorCode; return Object.keys(result).length ? result : undefined; })()}}',
+			},
+		},
+	},
+	{
+		displayName: 'Additional Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add option',
+		default: {},
+		displayOptions: {
+			show: showSpan,
+		},
+		options: [
+			{ displayName: 'Cost Version', name: 'totalEstimatedCostVersion', type: 'string', default: '' },
+			{
+				displayName: 'Custom End Time',
+				name: 'endTime',
+				type: 'dateTime',
+				default: '',
+				description: 'Override the default end time (defaults to now)',
+			},
+			{
+				displayName: 'Custom Start Time',
+				name: 'startTime',
+				type: 'dateTime',
+				default: '',
+				description: 'Override the default start time (defaults to now)',
+			},
+			{ displayName: 'Error Code', name: 'errorCode', type: 'string', default: '' },
+			{ displayName: 'Error Message', name: 'errorMessage', type: 'string', default: '' },
+			{ displayName: 'Error Type', name: 'errorType', type: 'string', default: '' },
+			{ displayName: 'Model', name: 'model', type: 'string', default: '' },
+			{
+				displayName: 'Parent Span ID',
+				name: 'parentSpanId',
+				type: 'string',
+				default: '',
+				description: 'Attach to a parent span to build a hierarchy',
+			},
+			{ displayName: 'Provider', name: 'provider', type: 'string', default: '' },
+			{
+				displayName: 'Span ID',
+				name: 'spanId',
+				type: 'string',
+				default: '',
+				description: 'Provide your own span ID; leave empty to auto-generate',
+			},
+			{
+				displayName: 'Span Type',
+				name: 'spanType',
+				type: 'options',
+				options: [
+					{ name: 'Agent', value: 'agent' },
+					{ name: 'General', value: 'general' },
+					{ name: 'Guardrail', value: 'guardrail' },
+					{ name: 'LLM', value: 'llm' },
+					{ name: 'Tool', value: 'tool' },
+				],
+				default: 'general',
+				description: 'Categorize the work performed within the span',
+			},
+			{
+				displayName: 'Tags',
+				name: 'tags',
+				type: 'string',
+				typeOptions: { multipleValues: true },
+				default: [],
+				description: 'Tag the span for easier filtering in Opik',
+			},
+			{
+				displayName: 'Total Estimated Cost',
+				name: 'totalEstimatedCost',
+				type: 'number',
+				default: 0,
+				description: 'Cost associated with the span',
+			},
+			{
+				displayName: 'Usage Entries',
+				name: 'spanUsageAssignments',
+				type: 'assignmentCollection',
+				default: {},
+				description: 'Token counts or other usage metrics',
+			},
+		],
 	},
 	{
 		displayName: 'Tags',
