@@ -94,10 +94,14 @@ export const promptDescription: INodeProperties[] = [
 		hint: 'This field updates automatically when you pick a prompt version',
 		typeOptions: {
 			rows: 6,
+			editor: 'codeNodeEditor',
 			editorIsReadOnly: true,
 		},
 		displayOptions: {
-			show: showPrompt,
+			show: {
+				...showPrompt,
+				promptId: [{ _cnd: { exists: true } }],
+			},
 		},
 	},
 ];
