@@ -77,6 +77,7 @@ export const promptDescription: INodeProperties[] = [
 		typeOptions: {
 			loadOptionsMethod: 'getPromptText',
 			loadOptionsDependsOn: ['promptId', 'promptVersion'],
+			rows: 6,
 		},
 		displayOptions: {
 			show: showPrompt,

@@ -129,20 +129,11 @@ export const traceDescription: INodeProperties[] = [
 		],
 	},
 	{
-		displayName: 'Input Mode',
-		name: 'traceInputMode',
-		type: 'options',
-		default: 'assignment',
-		options: [
-			{
-				name: 'Key/Value (Drag & Drop)',
-				value: 'assignment',
-			},
-			{
-				name: 'JSON',
-				value: 'json',
-			},
-		],
+		displayName: 'Use JSON Input',
+		name: 'traceInputUseJson',
+		type: 'boolean',
+		default: false,
+		description: 'Whether to enter the payload as raw JSON instead of key/value pairs',
 		displayOptions: {
 			show: showStartTrace,
 		},
@@ -155,7 +146,7 @@ export const traceDescription: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showStartTrace,
-				traceInputMode: ['assignment'],
+				traceInputUseJson: [false],
 			},
 		},
 	},
@@ -167,7 +158,7 @@ export const traceDescription: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showStartTrace,
-				traceInputMode: ['json'],
+				traceInputUseJson: [true],
 			},
 		},
 	},
@@ -184,25 +175,16 @@ export const traceDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'input',
 				value:
-					'={{$parameter.traceInputMode === "json" ? (() => { const data = $parameter.traceInputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
+					'={{$parameter.traceInputUseJson ? (() => { const data = $parameter.traceInputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
 	{
-		displayName: 'Metadata Mode',
-		name: 'traceMetadataMode',
-		type: 'options',
-		default: 'assignment',
-		options: [
-			{
-				name: 'Key/Value (Drag & Drop)',
-				value: 'assignment',
-			},
-			{
-				name: 'JSON',
-				value: 'json',
-			},
-		],
+		displayName: 'Use JSON Metadata',
+		name: 'traceMetadataUseJson',
+		type: 'boolean',
+		default: false,
+		description: 'Whether to enter metadata as raw JSON instead of key/value pairs',
 		displayOptions: {
 			show: showStartTrace,
 		},
@@ -215,7 +197,7 @@ export const traceDescription: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showStartTrace,
-				traceMetadataMode: ['assignment'],
+				traceMetadataUseJson: [false],
 			},
 		},
 	},
@@ -227,7 +209,7 @@ export const traceDescription: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showStartTrace,
-				traceMetadataMode: ['json'],
+				traceMetadataUseJson: [true],
 			},
 		},
 	},
@@ -244,7 +226,7 @@ export const traceDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'metadata',
 				value:
-					'={{$parameter.traceMetadataMode === "json" ? (() => { const data = $parameter.traceMetadataJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
+					'={{$parameter.traceMetadataUseJson ? (() => { const data = $parameter.traceMetadataJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
