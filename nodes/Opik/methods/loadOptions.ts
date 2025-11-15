@@ -116,7 +116,7 @@ export async function getPromptVersions(
 				? labelParts.join(' · ')
 				: `Version ${versions.length - index}`,
 			value: version.id,
-			description: version.change_description?.trim() || undefined,
+			description: (version as { change_description?: string }).change_description?.trim() || undefined,
 		});
 	}
 
