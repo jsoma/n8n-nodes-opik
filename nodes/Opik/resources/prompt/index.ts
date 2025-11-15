@@ -19,24 +19,32 @@ export const promptDescription: INodeProperties[] = [
 				value: 'get',
 				action: 'Get a prompt',
 				description: 'Fetch a named prompt and optionally a specific version',
-					routing: {
-						request: {
-							method: 'GET',
-							url: '={{!$parameter.promptVersion || $parameter.promptVersion === "latest" ? `/v1/private/prompts/${$parameter.promptId}` : `/v1/private/prompts/versions/${$parameter.promptVersion}`}}',
-						},
-						output: {
-							postReceive: [
-								{
-									type: 'rootProperty',
-									enabled:
-										'={{!$parameter.promptVersion || $parameter.promptVersion === "latest"}}',
-									properties: {
-										property: 'latest_version',
-									},
-								},
-							],
-						},
+				routing: {
+					request: {
+						method: 'GET',
+						url: '={{!$parameter.promptVersion || $parameter.promptVersion === "latest" ? `/v1/private/prompts/${$parameter.promptId}` : `/v1/private/prompts/versions/${$parameter.promptVersion}`}}',
 					},
+					output: {
+						postReceive: [
+							{
+								type: 'rootProperty',
+								enabled:
+									'={{!$parameter.promptVersion || $parameter.promptVersion === "latest"}}',
+								properties: {
+									property: 'latest_version',
+								},
+							},
+							{
+								type: 'setKeyValue',
+								enabled: '={{$parameter.generateN8nTemplate !== false}}',
+								properties: {
+									n8n_template:
+										'={{$json.template ? $json.template.replace(/{{\\s*([^{}\\s]+)\\s*}}/g, (match, name) => `{{$json["${name}"]}}`) : undefined}}',
+								},
+							},
+						],
+					},
+				},
 			},
 		],
 		default: 'get',
@@ -73,6 +81,17 @@ export const promptDescription: INodeProperties[] = [
 			loadOptionsMethod: 'getPromptVersions',
 			loadOptionsDependsOn: ['promptId'],
 		},
+		displayOptions: {
+			show: showPrompt,
+		},
+	},
+	{
+		displayName: 'Generate N8n Template',
+		name: 'generateN8nTemplate',
+		type: 'boolean',
+		default: true,
+		description:
+			'Whether to add an `n8n_template` field with {{ ... }} placeholders converted to JSON expressions (for example <code>{{$&#106;&#115;&#111;&#110;["..."]}}</code>).',
 		displayOptions: {
 			show: showPrompt,
 		},

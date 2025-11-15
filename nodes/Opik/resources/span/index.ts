@@ -107,51 +107,14 @@ export const spanDescription: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Input',
-		name: 'spanInputGroup',
-		type: 'collection',
-		placeholder: 'Configure input data',
+		displayName: 'Input Entries',
+		name: 'spanInputAssignments',
+		type: 'assignmentCollection',
+		placeholder: 'Add input entry',
 		default: {},
-		typeOptions: {
-			multipleValues: false,
-		},
 		displayOptions: {
 			show: showSpan,
 		},
-	options: [
-		{
-			displayName: 'Input Mode',
-			name: 'spanInputMode',
-			type: 'options',
-			default: 'manual',
-			options: [
-				{ name: 'Manual Mapping (Drag & Drop)', value: 'manual' },
-				{ name: 'JSON', value: 'json' },
-			],
-		},
-		{
-			displayName: 'Input Key/Value Pairs',
-			name: 'spanInputAssignments',
-			type: 'assignmentCollection',
-			default: {},
-			displayOptions: {
-				show: {
-					'options.spanInputMode': ['manual'],
-				},
-			},
-		},
-		{
-			displayName: 'Input (JSON)',
-			name: 'spanInputJson',
-			type: 'json',
-			default: '{}',
-			displayOptions: {
-				show: {
-					'options.spanInputMode': ['json'],
-				},
-			},
-		},
-	],
 	},
 	{
 		displayName: 'Resolved Input',
@@ -166,45 +129,18 @@ export const spanDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'input',
 				value:
-					'={{$parameter.spanInputMode === "json" ? (() => { const data = $parameter.spanInputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.spanInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
+					'={{(() => { const assignments = $parameter.spanInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
-		},
-	},
-	{
-		displayName: 'Output Mode',
-		name: 'spanOutputMode',
-		type: 'options',
-		default: 'manual',
-		options: [
-			{ name: 'Manual Mapping (Drag & Drop)', value: 'manual' },
-			{ name: 'JSON', value: 'json' },
-		],
-		displayOptions: {
-			show: showSpan,
 		},
 	},
 	{
 		displayName: 'Output Key/Value Pairs',
 		name: 'spanOutputAssignments',
 		type: 'assignmentCollection',
+		placeholder: 'Add output entry',
 		default: {},
 		displayOptions: {
-			show: {
-				...showSpan,
-				spanOutputMode: ['manual'],
-			},
-		},
-	},
-	{
-		displayName: 'Output (JSON)',
-		name: 'spanOutputJson',
-		type: 'json',
-		default: '{}',
-		displayOptions: {
-			show: {
-				...showSpan,
-				spanOutputMode: ['json'],
-			},
+			show: showSpan,
 		},
 	},
 	{
@@ -220,56 +156,19 @@ export const spanDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'output',
 				value:
-					'={{$parameter.spanOutputMode === "json" ? (() => { const data = $parameter.spanOutputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.spanOutputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
+					'={{(() => { const assignments = $parameter.spanOutputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
 	{
-		displayName: 'Metadata',
-		name: 'spanMetadataGroup',
-		type: 'collection',
-		placeholder: 'Configure metadata',
+		displayName: 'Metadata Entries',
+		name: 'spanMetadataAssignments',
+		type: 'assignmentCollection',
+		placeholder: 'Add metadata entry',
 		default: {},
-		typeOptions: {
-			multipleValues: false,
-		},
 		displayOptions: {
 			show: showSpan,
 		},
-		options: [
-			{
-				displayName: 'Metadata Mode',
-				name: 'spanMetadataMode',
-				type: 'options',
-				default: 'manual',
-				options: [
-					{ name: 'Manual Mapping (Drag & Drop)', value: 'manual' },
-					{ name: 'JSON', value: 'json' },
-				],
-			},
-			{
-				displayName: 'Metadata Key/Value Pairs',
-				name: 'spanMetadataAssignments',
-				type: 'assignmentCollection',
-				default: {},
-				displayOptions: {
-					show: {
-						'options.spanMetadataMode': ['manual'],
-					},
-				},
-			},
-			{
-				displayName: 'Metadata (JSON)',
-				name: 'spanMetadataJson',
-				type: 'json',
-				default: '{}',
-				displayOptions: {
-					show: {
-						'options.spanMetadataMode': ['json'],
-					},
-				},
-			},
-		],
 	},
 	{
 		displayName: 'Resolved Metadata',
@@ -284,7 +183,7 @@ export const spanDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'metadata',
 				value:
-					'={{$parameter.spanMetadataMode === "json" ? (() => { const data = $parameter.spanMetadataJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.spanMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
+					'={{(() => { const assignments = $parameter.spanMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},

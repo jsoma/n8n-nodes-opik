@@ -9,11 +9,6 @@ const showStartTrace = {
 	operation: ['start'],
 };
 
-const showEndTrace = {
-	...showTrace,
-	operation: ['end'],
-};
-
 export const traceDescription: INodeProperties[] = [
 	{
 		displayName: 'Operation',
@@ -25,9 +20,9 @@ export const traceDescription: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Start Trace',
+				name: 'Create Trace',
 				value: 'start',
-				action: 'Start a trace',
+				action: 'Create a trace',
 				description: 'Create a new Opik trace to capture workflow execution',
 				routing: {
 					request: {
@@ -49,9 +44,9 @@ export const traceDescription: INodeProperties[] = [
 								properties: {
 									traceId:
 										'={{$response.headers?.location ? $response.headers.location.split("/").pop() : undefined}}',
-								traceName:
-									"={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
-								projectName: '={{$parameter.projectName}}',
+									traceName:
+										"={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
+									projectName: '={{$parameter.projectName}}',
 									threadId: '={{$parameter.options?.threadId || undefined}}',
 									traceUrl: '={{$response.headers?.location || undefined}}',
 									status: '={{$parameter.options?.autoEndTrace ? "ended" : "started"}}',
@@ -59,21 +54,6 @@ export const traceDescription: INodeProperties[] = [
 								},
 							},
 						],
-					},
-				},
-			},
-			{
-				name: 'End Trace',
-				value: 'end',
-				action: 'End a trace',
-				description: 'Complete an existing Opik trace with output details',
-				routing: {
-					request: {
-						method: 'PATCH',
-						url: '=/v1/private/traces/{{$parameter.traceId}}',
-						body: {
-							end_time: '={{$now.toISO()}}',
-						},
 					},
 				},
 			},
@@ -186,87 +166,6 @@ export const traceDescription: INodeProperties[] = [
 			send: {
 				type: 'body',
 				property: 'tags',
-			},
-		},
-	},
-	{
-		displayName: 'Trace ID',
-		name: 'traceId',
-		type: 'string',
-		required: true,
-		default: '',
-		description: 'Unique identifier returned by the Start Trace operation',
-		displayOptions: {
-			show: showEndTrace,
-		},
-	},
-	{
-		displayName: 'Output',
-		name: 'traceOutputAssignments',
-		type: 'assignmentCollection',
-		default: {},
-		description: 'Final output of the workflow run. Leave empty to skip.',
-		displayOptions: {
-			show: showEndTrace,
-		},
-	},
-	{
-		displayName: 'Resolved Output',
-		name: 'traceOutput',
-		type: 'hidden',
-		default: '',
-		displayOptions: {
-			show: showEndTrace,
-		},
-		routing: {
-			send: {
-				type: 'body',
-				property: 'output',
-				value:
-					'={{(() => { const assignments = $parameter.traceOutputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
-			},
-		},
-	},
-	{
-		displayName: 'Additional Metadata',
-		name: 'traceEndMetadataAssignments',
-		type: 'assignmentCollection',
-		default: {},
-		description: 'Metadata updates to attach when completing the trace',
-		displayOptions: {
-			show: showEndTrace,
-		},
-	},
-	{
-		displayName: 'Resolved Metadata',
-		name: 'traceEndMetadata',
-		type: 'hidden',
-		default: '',
-		displayOptions: {
-			show: showEndTrace,
-		},
-		routing: {
-			send: {
-				type: 'body',
-				property: 'metadata',
-				value:
-					'={{(() => { const assignments = $parameter.traceEndMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
-			},
-		},
-	},
-	{
-		displayName: 'Error Message',
-		name: 'traceError',
-		type: 'string',
-		default: '',
-		description: 'Text description of any failure that occurred',
-		displayOptions: {
-			show: showEndTrace,
-		},
-		routing: {
-			send: {
-				type: 'body',
-				property: 'error',
 			},
 		},
 	},
