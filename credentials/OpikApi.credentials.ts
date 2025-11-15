@@ -37,9 +37,10 @@ export class OpikApi implements ICredentialType {
 			displayName: 'Workspace Name',
 			name: 'workspace',
 			type: 'string',
+			required: true,
 			default: '',
 			description:
-				'Optional default workspace/project namespace. Set this when you want to scope trace creation without providing project_name on every request.',
+				'Opik workspace slug (the part after /opik/ in the URL, for example "jsoma"). This is required for Opik Cloud.',
 		},
 	];
 
@@ -56,8 +57,12 @@ export class OpikApi implements ICredentialType {
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '={{$credentials.baseUrl}}',
-			url: '/v1/health',
+			url: '/v1/private/projects',
 			method: 'GET',
+			headers: {
+				Authorization: '={{$credentials.apiKey ? `Bearer ${$credentials.apiKey}` : undefined}}',
+				'Comet-Workspace': '={{$credentials.workspace}}',
+			},
 		},
 	};
 }

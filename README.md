@@ -40,7 +40,7 @@ Then create an **Opik API** credential with:
 
 - **API URL** – Defaults to `https://www.comet.com/opik/api`. Point this to your self-hosted base URL if needed (must include the `/api` suffix).
 - **API Key** – Required for Opik Cloud. You can generate one from the Opik UI (Settings → API Keys). Leave blank only if your self-hosted deployment allows anonymous requests.
-- **Workspace Name** – Optional default workspace/project namespace so you don’t have to pass `project_name` in every trace call.
+- **Workspace Name** – Required slug that appears after `/opik/` in the URL (for example `https://www.comet.com/opik/jsoma/...` → `jsoma`). Opik Cloud rejects requests without it.
 
 The credential tester pings `/v1/health` to verify connectivity before you run workflows.
 
