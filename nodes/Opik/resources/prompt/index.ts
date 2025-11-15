@@ -22,7 +22,7 @@ export const promptDescription: INodeProperties[] = [
 					routing: {
 						request: {
 							method: 'GET',
-							url: '={{!$parameter.promptVersion || $parameter.promptVersion === "latest" ? `/v1/private/prompts/${$parameter.promptId}` : `/v1/private/prompts/${$parameter.promptId}/versions/${$parameter.promptVersion}`}}',
+							url: '={{!$parameter.promptVersion || $parameter.promptVersion === "latest" ? `/v1/private/prompts/${$parameter.promptId}` : `/v1/private/prompts/versions/${$parameter.promptVersion}`}}',
 						},
 					},
 			},
