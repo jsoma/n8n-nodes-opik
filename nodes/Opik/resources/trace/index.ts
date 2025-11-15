@@ -82,46 +82,56 @@ export const traceDescription: INodeProperties[] = [
 	},
 	{
 		displayName: 'Input',
-		name: 'traceInputHeadline',
-		type: 'notice',
-		default: '',
-		displayOptions: {
-			show: showStartTrace,
-		},
-	},
-	{
-		displayName: 'Use JSON Input',
-		name: 'traceInputUseJson',
-		type: 'boolean',
-		default: false,
-		description: 'Whether to enter the payload as raw JSON instead of key/value pairs',
-		displayOptions: {
-			show: showStartTrace,
-		},
-	},
-	{
-		displayName: 'Input Key/Value Pairs',
-		name: 'traceInputAssignments',
-		type: 'assignmentCollection',
+		name: 'traceInputGroup',
+		type: 'collection',
+		placeholder: 'Configure input data',
 		default: {},
+		typeOptions: {
+			multipleValues: false,
+		},
 		displayOptions: {
-			show: {
-				...showStartTrace,
-				traceInputUseJson: [false],
+			show: showStartTrace,
+		},
+	options: [
+		{
+			displayName: 'Input Mode',
+			name: 'traceInputMode',
+				type: 'options',
+				default: 'manual',
+				options: [
+					{
+						name: 'Manual Mapping (Drag & Drop)',
+						value: 'manual',
+					},
+					{
+						name: 'JSON',
+						value: 'json',
+					},
+				],
+		},
+		{
+			displayName: 'Input Key/Value Pairs',
+			name: 'traceInputAssignments',
+			type: 'assignmentCollection',
+			default: {},
+			displayOptions: {
+				show: {
+					'options.traceInputMode': ['manual'],
+				},
 			},
 		},
-	},
-	{
-		displayName: 'Input (JSON)',
-		name: 'traceInputJson',
-		type: 'json',
-		default: '{}',
-		displayOptions: {
-			show: {
-				...showStartTrace,
-				traceInputUseJson: [true],
+		{
+			displayName: 'Input (JSON)',
+			name: 'traceInputJson',
+			type: 'json',
+			default: '{}',
+			displayOptions: {
+				show: {
+					'options.traceInputMode': ['json'],
+				},
 			},
 		},
+	],
 	},
 	{
 		displayName: 'Resolved Input',
@@ -136,52 +146,62 @@ export const traceDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'input',
 				value:
-					'={{$parameter.traceInputUseJson ? (() => { const data = $parameter.traceInputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
+					'={{$parameter.traceInputMode === "json" ? (() => { const data = $parameter.traceInputJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceInputAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},
 	{
 		displayName: 'Metadata',
-		name: 'traceMetadataHeadline',
-		type: 'notice',
-		default: '',
-		displayOptions: {
-			show: showStartTrace,
-		},
-	},
-	{
-		displayName: 'Use JSON Metadata',
-		name: 'traceMetadataUseJson',
-		type: 'boolean',
-		default: false,
-		description: 'Whether to enter metadata as raw JSON instead of key/value pairs',
-		displayOptions: {
-			show: showStartTrace,
-		},
-	},
-	{
-		displayName: 'Metadata Key/Value Pairs',
-		name: 'traceMetadataAssignments',
-		type: 'assignmentCollection',
+		name: 'traceMetadataGroup',
+		type: 'collection',
+		placeholder: 'Configure metadata',
 		default: {},
+		typeOptions: {
+			multipleValues: false,
+		},
 		displayOptions: {
-			show: {
-				...showStartTrace,
-				traceMetadataUseJson: [false],
+			show: showStartTrace,
+		},
+	options: [
+		{
+			displayName: 'Metadata Mode',
+			name: 'traceMetadataMode',
+			type: 'options',
+			default: 'manual',
+			options: [
+				{
+					name: 'Manual Mapping (Drag & Drop)',
+					value: 'manual',
+				},
+				{
+					name: 'JSON',
+					value: 'json',
+				},
+			],
+		},
+		{
+			displayName: 'Metadata Key/Value Pairs',
+			name: 'traceMetadataAssignments',
+			type: 'assignmentCollection',
+			default: {},
+			displayOptions: {
+				show: {
+					'options.traceMetadataMode': ['manual'],
+				},
 			},
 		},
-	},
-	{
-		displayName: 'Metadata (JSON)',
-		name: 'traceMetadataJson',
-		type: 'json',
-		default: '{}',
-		displayOptions: {
-			show: {
-				...showStartTrace,
-				traceMetadataUseJson: [true],
+		{
+			displayName: 'Metadata (JSON)',
+			name: 'traceMetadataJson',
+			type: 'json',
+			default: '{}',
+			displayOptions: {
+				show: {
+					'options.traceMetadataMode': ['json'],
+				},
 			},
 		},
+	],
 	},
 	{
 		displayName: 'Resolved Metadata',
@@ -196,7 +216,7 @@ export const traceDescription: INodeProperties[] = [
 				type: 'body',
 				property: 'metadata',
 				value:
-					'={{$parameter.traceMetadataUseJson ? (() => { const data = $parameter.traceMetadataJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
+					'={{$parameter.traceMetadataMode === "json" ? (() => { const data = $parameter.traceMetadataJson || {}; return Object.keys(data).length ? data : undefined; })() : (() => { const assignments = $parameter.traceMetadataAssignments?.assignments || []; if (!assignments.length) { return undefined; } const obj = {}; for (const assignment of assignments) { if (assignment.name) { obj[assignment.name] = assignment.value; } } return Object.keys(obj).length ? obj : undefined; })()}}',
 			},
 		},
 	},

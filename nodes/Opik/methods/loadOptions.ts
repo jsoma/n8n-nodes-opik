@@ -148,11 +148,29 @@ export async function getPromptText(this: ILoadOptionsFunctions): Promise<INodeP
 		})) as { latest_version?: { template?: string } };
 		template = response.latest_version?.template ?? '';
 	} else {
-		const response = (await requestOpik.call(this, {
-			method: 'GET',
-			url: `/v1/private/prompts/${promptId}/versions/${promptVersion}`,
-		})) as { template?: string };
-		template = response.template ?? '';
+		try {
+			const response = (await requestOpik.call(this, {
+				method: 'GET',
+				url: `/v1/private/prompts/versions/${promptVersion}`,
+			})) as { template?: string };
+			template = response.template ?? '';
+		} catch {
+			const response = (await requestOpik.call(this, {
+				method: 'GET',
+				url: `/v1/private/prompts/${promptId}/versions`,
+				qs: {
+					size: 200,
+					page: 1,
+				},
+			})) as OpikPromptVersionsResponse;
+
+			if (Array.isArray(response.content)) {
+				const matched =
+					response.content.find((version) => version.id === promptVersion) ||
+					response.content.find((version) => version.commit === promptVersion);
+				template = matched?.template ?? '';
+			}
+		}
 	}
 
 	const normalized = template || '(Prompt has no template)';
