@@ -29,13 +29,16 @@ export const guardrailDescription: INodeProperties[] = [
 				value: 'check',
 				action: 'Check guardrails',
 				description: 'Validate content against PII detection or topic guardrails',
-				routing: {
-					request: {
-						method: 'POST',
-						url: '/v1/private/guardrails/check',
+					routing: {
+						request: {
+							method: 'POST',
+							url: '/v1/private/guardrails/check',
+							body: {
+								project_name: '={{$parameter.projectName}}',
+							},
+						},
 					},
 				},
-			},
 		],
 		default: 'check',
 	},

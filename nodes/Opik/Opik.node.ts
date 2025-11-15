@@ -44,6 +44,24 @@ export class Opik implements INodeType {
 				],
 				default: 'trace',
 			},
+			{
+				displayName: 'Project Name or ID',
+				name: 'projectName',
+				type: 'options',
+				required: true,
+				noDataExpression: true,
+				default: '',
+				description:
+					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+				typeOptions: {
+					loadOptionsMethod: 'getProjects',
+				},
+				displayOptions: {
+					show: {
+						resource: ['trace', 'span', 'prompt', 'guardrail', 'feedback'],
+					},
+				},
+			},
 			...traceDescription,
 			...spanDescription,
 			...promptDescription,

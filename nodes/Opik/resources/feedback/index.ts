@@ -19,13 +19,16 @@ export const feedbackDescription: INodeProperties[] = [
 				value: 'score',
 				action: 'Log feedback',
 				description: 'Attach a numeric feedback score to a trace or span',
-				routing: {
-					request: {
-						method: 'POST',
-						url: '/v1/private/feedback',
+					routing: {
+						request: {
+							method: 'POST',
+							url: '/v1/private/feedback',
+							body: {
+								project_name: '={{$parameter.projectName}}',
+							},
+						},
 					},
 				},
-			},
 		],
 		default: 'score',
 	},

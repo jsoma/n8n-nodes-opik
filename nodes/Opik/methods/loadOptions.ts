@@ -51,12 +51,18 @@ async function requestOpik(
 }
 
 export async function getPrompts(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const projectName = this.getNodeParameter('projectName', 0) as string;
+	if (!projectName) {
+		return [];
+	}
+
 	const response = (await requestOpik.call(this, {
 		method: 'GET',
 		url: '/v1/private/prompts',
 		qs: {
 			size: 200,
 			page: 1,
+			project_name: projectName,
 		},
 	})) as OpikPromptListResponse;
 
@@ -75,8 +81,9 @@ export async function getPromptVersions(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
 	const promptId = this.getNodeParameter('promptId', 0) as string;
+	const projectName = this.getNodeParameter('projectName', 0) as string;
 
-	if (!promptId) {
+	if (!promptId || !projectName) {
 		return [];
 	}
 
@@ -86,6 +93,7 @@ export async function getPromptVersions(
 		qs: {
 			size: 50,
 			page: 1,
+			project_name: projectName,
 		},
 	})) as OpikPromptVersionsResponse;
 
@@ -135,7 +143,8 @@ export async function getProjects(this: ILoadOptionsFunctions): Promise<INodePro
 
 export async function getPromptText(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const promptId = this.getNodeParameter('promptId', 0) as string;
-	if (!promptId) return [];
+	const projectName = this.getNodeParameter('projectName', 0) as string;
+	if (!promptId || !projectName) return [];
 
 	const promptVersion = this.getNodeParameter('promptVersion', 0) as string;
 
@@ -145,6 +154,9 @@ export async function getPromptText(this: ILoadOptionsFunctions): Promise<INodeP
 		const response = (await requestOpik.call(this, {
 			method: 'GET',
 			url: `/v1/private/prompts/${promptId}`,
+			qs: {
+				project_name: projectName,
+			},
 		})) as { latest_version?: { template?: string } };
 		template = response.latest_version?.template ?? '';
 	} else {
@@ -152,6 +164,9 @@ export async function getPromptText(this: ILoadOptionsFunctions): Promise<INodeP
 			const response = (await requestOpik.call(this, {
 				method: 'GET',
 				url: `/v1/private/prompts/versions/${promptVersion}`,
+				qs: {
+					project_name: projectName,
+				},
 			})) as { template?: string };
 			template = response.template ?? '';
 		} catch {
@@ -161,6 +176,7 @@ export async function getPromptText(this: ILoadOptionsFunctions): Promise<INodeP
 				qs: {
 					size: 200,
 					page: 1,
+					project_name: projectName,
 				},
 			})) as OpikPromptVersionsResponse;
 

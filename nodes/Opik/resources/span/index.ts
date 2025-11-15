@@ -19,16 +19,17 @@ export const spanDescription: INodeProperties[] = [
 				value: 'log',
 				action: 'Log a span',
 				description: 'Record a detailed span within a trace',
-				routing: {
-					request: {
-						method: 'POST',
-						url: '/v1/private/spans',
-						body: {
-							start_time: '={{$now.toISO()}}',
-							end_time: '={{$now.toISO()}}',
+					routing: {
+						request: {
+							method: 'POST',
+							url: '/v1/private/spans',
+							body: {
+								start_time: '={{$now.toISO()}}',
+								end_time: '={{$now.toISO()}}',
+								project_name: '={{$parameter.projectName}}',
+							},
 						},
 					},
-				},
 			},
 		],
 		default: 'log',

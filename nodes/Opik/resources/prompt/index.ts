@@ -19,12 +19,15 @@ export const promptDescription: INodeProperties[] = [
 				value: 'get',
 				action: 'Get a prompt',
 				description: 'Fetch a named prompt and optionally a specific version',
-				routing: {
-					request: {
-						method: 'GET',
-						url: '={{!$parameter.promptVersion ? `/v1/private/prompts/${$parameter.promptId}` : `/v1/private/prompts/${$parameter.promptId}/versions/${$parameter.promptVersion}`}}',
+					routing: {
+						request: {
+							method: 'GET',
+							url: '={{!$parameter.promptVersion || $parameter.promptVersion === "latest" ? `/v1/private/prompts/${$parameter.promptId}` : `/v1/private/prompts/${$parameter.promptId}/versions/${$parameter.promptVersion}`}}',
+							qs: {
+								project_name: '={{$parameter.projectName}}',
+							},
+						},
 					},
-				},
 			},
 		],
 		default: 'get',
@@ -39,6 +42,7 @@ export const promptDescription: INodeProperties[] = [
 			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 		typeOptions: {
 			loadOptionsMethod: 'getPrompts',
+			loadOptionsDependsOn: ['projectName'],
 		},
 		displayOptions: {
 			show: showPrompt,
@@ -48,18 +52,18 @@ export const promptDescription: INodeProperties[] = [
 		displayName: 'Prompt Version Name or ID',
 		name: 'promptVersion',
 		type: 'options',
-		default: '',
+		default: 'latest',
 		description:
 			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 		options: [
 			{
 				name: 'Latest Version (Current)',
-				value: '',
+				value: 'latest',
 			},
 		],
 		typeOptions: {
 			loadOptionsMethod: 'getPromptVersions',
-			loadOptionsDependsOn: ['promptId'],
+			loadOptionsDependsOn: ['projectName', 'promptId'],
 		},
 		displayOptions: {
 			show: showPrompt,

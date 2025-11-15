@@ -37,7 +37,7 @@ export const traceDescription: INodeProperties[] = [
 						body: {
 							start_time: '={{$now.toISO()}}',
 							name: "={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
-							project_name: '={{$parameter.options?.projectName || undefined}}',
+							project_name: '={{$parameter.projectName}}',
 							thread_id: '={{$parameter.options?.threadId || undefined}}',
 							end_time: '={{$parameter.options?.autoEndTrace ? $now.toISO() : undefined}}',
 						},
@@ -49,9 +49,9 @@ export const traceDescription: INodeProperties[] = [
 								properties: {
 									traceId:
 										'={{$response.headers?.location ? $response.headers.location.split("/").pop() : undefined}}',
-									traceName:
-										"={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
-									projectName: '={{$parameter.options?.projectName || "(workspace default)"}}',
+								traceName:
+									"={{$parameter.options?.traceName || `Trace ${$now.toFormat('yyyy-LL-dd HH:mm:ss')}`}}",
+								projectName: '={{$parameter.projectName}}',
 									threadId: '={{$parameter.options?.threadId || undefined}}',
 									traceUrl: '={{$response.headers?.location || undefined}}',
 									status: '={{$parameter.options?.autoEndTrace ? "ended" : "started"}}',
@@ -153,18 +153,6 @@ export const traceDescription: INodeProperties[] = [
 				default: '',
 				description:
 					'Override the auto-generated trace label (defaults to a timestamp if left empty)',
-			},
-			{
-				displayName: 'Project Name or ID',
-				name: 'projectName',
-				type: 'options',
-				required: true,
-				default: '',
-				description:
-					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-				typeOptions: {
-					loadOptionsMethod: 'getProjects',
-				},
 			},
 			{
 				displayName: 'Thread ID',
