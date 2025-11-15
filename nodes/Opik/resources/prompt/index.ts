@@ -24,6 +24,18 @@ export const promptDescription: INodeProperties[] = [
 							method: 'GET',
 							url: '={{!$parameter.promptVersion || $parameter.promptVersion === "latest" ? `/v1/private/prompts/${$parameter.promptId}` : `/v1/private/prompts/versions/${$parameter.promptVersion}`}}',
 						},
+						output: {
+							postReceive: [
+								{
+									type: 'rootProperty',
+									enabled:
+										'={{!$parameter.promptVersion || $parameter.promptVersion === "latest"}}',
+									properties: {
+										property: 'latest_version',
+									},
+								},
+							],
+						},
 					},
 			},
 		],
