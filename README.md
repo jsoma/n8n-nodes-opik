@@ -27,6 +27,8 @@ The node exposes these Opik capabilities:
 - **Prompt** – fetch any prompt or a specific version from the Opik prompt library and see the resolved template immediately in the “Prompt Text” preview.
 - **Guardrail** – run PII detection or topic moderation checks and receive violations/redacted text.
 - **Feedback** – log numeric feedback for traces or spans (accuracy, relevance, quality, etc.).
+- **Dataset** – browse datasets and fetch dataset items (`content`) for replay/evaluation inside n8n.
+- **Agent Logger** – feed the JSON output of n8n’s AI Agent node and automatically create a trace plus spans based on `intermediateSteps`.
 
 ## Credentials
 
@@ -57,6 +59,22 @@ The credential tester pings `/v1/health` to verify connectivity before you run w
 4. Chain multiple operations together when you want full observability (Start Trace → Log Spans → Check Guardrails → Log Feedback → End Trace).
 
 Every operation returns the raw Opik API response so you can inspect IDs, metadata, or guardrail violations in downstream nodes.
+
+### Recommended trace/span workflow
+
+To get the most out of Opik’s observability features:
+
+1. **Start a trace at the beginning of the flow.** The trace represents the entire run of your n8n workflow. Save the `traceId` (and the auto-generated `threadId` if you want to group multiple runs together).
+2. **Log spans for meaningful steps.** Every tool invocation, API request, or reasoning block can become a span. Use nested spans (parent/child) to show call hierarchies.
+3. **Use the Opik Agent Logger for agent nodes.** This companion node takes the JSON output of n8n’s AI Agent, generates a trace/thread ID if needed, and automatically emits spans for each `intermediateStep` plus an optional summary span. It’s the fastest way to capture all tool calls without wiring multiple span nodes.
+4. **Attach guardrails and feedback.** After spans exist you can run guardrail checks or log numeric feedback against either the trace or specific spans.
+5. **Store and replay data with datasets.** The dataset resource lets you list dataset items and loop through them in n8n—ideal for regression testing or replaying saved traces/spans.
+
+**Trace vs Thread vs Span:**  
+- A **trace** is one execution of your workflow.  
+- A **thread** groups multiple traces that belong to the same session/conversation.  
+- A **span** captures a single step inside a trace (LLM call, tool invocation, guardrail, etc.).  
+The Agent Logger automates span creation for AI agents; for custom logic drop “Log Span” nodes wherever they make sense.
 
 ## Resources
 

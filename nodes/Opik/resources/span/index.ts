@@ -39,17 +39,17 @@ export const spanDescription: INodeProperties[] = [
 									'={{$parameter.options?.totalEstimatedCostVersion || undefined}}',
 							},
 						},
-						output: {
-							postReceive: [
-								{
-									type: 'setKeyValue',
-									properties: {
-										spanId: '={{$parameter.spanResolvedId}}',
-									},
+					output: {
+						postReceive: [
+							{
+								type: 'setKeyValue',
+								properties: {
+									spanId: '={{$parameter.spanResolvedId}}',
 								},
-							],
-						},
+							},
+						],
 					},
+				},
 				},
 		],
 		default: 'log',

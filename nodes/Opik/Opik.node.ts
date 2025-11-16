@@ -4,7 +4,8 @@ import { spanDescription } from './resources/span';
 import { promptDescription } from './resources/prompt';
 import { guardrailDescription } from './resources/guardrail';
 import { feedbackDescription } from './resources/feedback';
-import { getPrompts, getPromptVersions, getProjects, getPromptText } from './methods/loadOptions';
+import { datasetDescription } from './resources/dataset';
+import { getPrompts, getPromptVersions, getProjects, getPromptText, getDatasets } from './methods/loadOptions';
 
 export class Opik implements INodeType {
 	description: INodeTypeDescription = {
@@ -36,6 +37,7 @@ export class Opik implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
+					{ name: 'Dataset', value: 'dataset' },
 					{ name: 'Feedback', value: 'feedback' },
 					{ name: 'Guardrail', value: 'guardrail' },
 					{ name: 'Prompt', value: 'prompt' },
@@ -67,6 +69,7 @@ export class Opik implements INodeType {
 			...promptDescription,
 			...guardrailDescription,
 			...feedbackDescription,
+			...datasetDescription,
 		],
 	};
 
@@ -76,6 +79,7 @@ export class Opik implements INodeType {
 			getPromptVersions,
 			getProjects,
 			getPromptText,
+			getDatasets,
 		},
 	};
 }

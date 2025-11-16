@@ -37,7 +37,8 @@
       "dist/credentials/OpikApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/Opik/Opik.node.js"
+      "dist/nodes/Opik/Opik.node.js",
+      "dist/nodes/Opik/OpikAgentLogger.node.js"
     ]
   },
   "devDependencies": {

@@ -33,6 +33,15 @@ type OpikProjectListResponse = {
 	}>;
 };
 
+type OpikDatasetListResponse = {
+	content?: Array<{
+		id?: string;
+		name?: string;
+		description?: string;
+		tags?: string[];
+	}>;
+};
+
 async function requestOpik(
 	this: ILoadOptionsFunctions,
 	options: IHttpRequestOptions,
@@ -139,6 +148,25 @@ export async function getProjects(this: ILoadOptionsFunctions): Promise<INodePro
 		name: project.name,
 		value: project.name,
 		description: project.id ? `ID: ${project.id}` : undefined,
+	}));
+}
+
+export async function getDatasets(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const response = (await requestOpik.call(this, {
+		method: 'GET',
+		url: '/v1/private/datasets',
+		qs: {
+			size: 200,
+			page: 1,
+		},
+	})) as OpikDatasetListResponse;
+
+	const datasets = Array.isArray(response.content) ? response.content : [];
+
+	return datasets.map((dataset) => ({
+		name: dataset.name ?? dataset.id ?? '(Unnamed dataset)',
+		value: dataset.id ?? dataset.name ?? '',
+		description: dataset.description,
 	}));
 }
 
